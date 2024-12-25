@@ -30,8 +30,3 @@ struct Particle : public Pose {
         Particle(const Pose& pose) : Pose(pose), weight(0), id(0) {};
         Particle(const Pose& pose, float weight, unsigned int id) : Pose(pose), weight(weight), id(id) {};
 };
-
-int main() {
-    rerun::Position3D pos;
-    Pose p = {};
-}
