@@ -3,7 +3,8 @@ project(mcl LANGUAGES CXX)
 
 add_executable(mcl src/main.cpp
         src/mcl.cpp
-        include/particle.hpp)
+        include/particle.hpp
+        src/robot.cpp)
 
 # Download the rerun_sdk
 include(FetchContent)
