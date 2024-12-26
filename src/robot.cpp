@@ -5,26 +5,11 @@
 #include <print>
 #include "mcl.hpp"
 
-inline double gen_real_random(std::mt19937& rand_gen) {
-    std::uniform_real_distribution<double> real_dist(0.0, 1.0); // Real
-    return real_dist(rand_gen);
-}
-
 inline double mod(double first_term, double second_term) {
     return first_term - (second_term)*floor(first_term / (second_term));
 }
 
 inline double norm_delta(double radians) { return std::remainder(radians, 2 * M_PI); }
-
-Robot::Robot() {
-    pose.x = gen_real_random(this->gen) * world::world_size; // robot's x coordinate
-    pose.y = gen_real_random(this->gen) * world::world_size; // robot's y coordinate
-    pose.theta = gen_real_random(this->gen) * 2.0 * M_PI; // robot's orientation
-
-    forward_noise = 0.0; // noise of the forward movement
-    turn_noise = 0.0; // noise of the turn
-    sense_noise = 0.0; // noise of the sensing
-}
 
 Robot::Robot(Pose pose, const std::array<double, 3>& noise) {
     this->pose = pose;
@@ -33,8 +18,7 @@ Robot::Robot(Pose pose, const std::array<double, 3>& noise) {
     sense_noise = noise[2];
 }
 
-
-void Robot::set(double new_x, double new_y, double new_theta) {
+void Robot::set_pose(double new_x, double new_y, double new_theta) {
     if (new_x < 0 || new_x >= world::world_size) throw std::invalid_argument("X coordinate out of bound");
     if (new_y < 0 || new_y >= world::world_size) throw std::invalid_argument("Y coordinate out of bound");
     if (new_theta < 0 || new_theta >= 2 * M_PI) throw std::invalid_argument("Orientation must be in [0..2pi]");
@@ -42,6 +26,15 @@ void Robot::set(double new_x, double new_y, double new_theta) {
     this->pose.x = new_x;
     this->pose.y = new_y;
     this->pose.theta = new_theta;
+}
+
+void Robot::set_pose(Pose new_pose) {
+    if (new_pose.x < 0 || new_pose.x >= world::world_size) throw std::invalid_argument("X coordinate out of bound");
+    if (new_pose.y < 0 || new_pose.y >= world::world_size) throw std::invalid_argument("Y coordinate out of bound");
+    if (new_pose.theta < 0 || new_pose.theta >= 2 * M_PI)
+        throw std::invalid_argument("Orientation must be in [0..2pi]");
+
+    this->pose = new_pose;
 }
 
 void Robot::set_noise(double new_forward_noise, double new_turn_noise, double new_sense_noise) {
@@ -81,9 +74,7 @@ Robot Robot::move(double turn, double forward) {
     return {pose, {forward_noise, turn_noise, sense_noise}};
 }
 
-void Robot::show_pose() const {
-    printf("[ x= %.2f | y= %.2f | theta= %.2f ]", pose.x, pose.y, pose.theta);
-}
+void Robot::show_pose() const { printf("[ x= %.2f | y= %.2f | theta= %.2f ]\n", pose.x, pose.y, pose.theta); }
 
 void Robot::read_sensors() {
     std::vector<double> z = sense();
@@ -104,5 +95,3 @@ double Robot::measurement_prob(const std::vector<double>& measurement) {
 
     return prob;
 }
-
-

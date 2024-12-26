@@ -10,16 +10,19 @@
 #include "world.hpp"
 
 extern inline double mod(double first_term, double second_term);
-extern inline double gen_real_random(std::mt19937& rand_gen);
 extern inline double norm_delta(double radians);
 
 class Robot {
     public:
-        explicit Robot();
+        Robot() = default;
+
+//        Robot(const std::array<double, 3>& noise);
 
         Robot(Pose pose, const std::array<double, 3>& noise);
 
-        void set(double new_x, double new_y, double new_orient);
+        void set_pose(double new_x, double new_y, double new_orient);
+
+        void set_pose(Pose new_pose);
 
         void set_noise(double new_forward_noise, double new_turn_noise, double new_sense_noise);
 
@@ -48,5 +51,5 @@ class Robot {
         }
     private:
         std::random_device rd;
-        std::mt19937 gen;
+        std::mt19937 gen{rd()};
 };
