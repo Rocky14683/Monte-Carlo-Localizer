@@ -1,7 +1,22 @@
 #pragma once
 #include "rerun.hpp"
 
+struct Point {
+        double x;
+        double y;
 
+        const double operator[](int i) const {
+            if (i == 0) return x;
+            if (i == 1) return y;
+            throw std::invalid_argument("Index out of bounds");
+        }
+
+        double& operator[](int i) {
+            if (i == 0) return x;
+            if (i == 1) return y;
+            throw std::invalid_argument("Index out of bounds");
+        }
+};
 
 struct Pose {
         double x;
@@ -15,12 +30,8 @@ struct Pose {
             return *this;
         }
 
-        rerun::Position3D to_position3d() {
-            return rerun::Position3D(x, y, theta);
-        }
+        rerun::Position2D to_rr_position() { return rerun::Position2D(x, y); }
 };
-
-
 
 struct Particle : public Pose {
         float weight;
